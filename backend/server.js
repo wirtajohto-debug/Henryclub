@@ -2,15 +2,16 @@ import express from 'express'
 import cors from 'cors'
 import { db, messaging } from './firebase-admin.js'
 import tokenRoutes from './routes/whatsapp.js'
-import balanceRoutes from './routes/balance.js'  // ✅ require -> import + .js-pääte
+import balanceRoutes from './routes/balance.js'
 
 const app = express()
 app.use(cors())
 app.use(express.json())
 
+// Testaa että API on pystyssä
 app.get('/', (_, res) => res.json({ ok: true, service: 'HenryClub API' }))
 
-// Simple notify endpoint: sends a broadcast notification to all users with pushToken
+// Notify kaikki käyttäjät joilla pushToken
 app.post('/notify', async (req, res) => {
   try {
     const usersSnap = await db.collection('users').where('pushToken', '!=', null).get()
@@ -41,9 +42,9 @@ app.post('/notify', async (req, res) => {
   }
 })
 
+// Liitetään token- ja balance-reitit
 app.use('/token', tokenRoutes)
-app.use('/admin/balance', balanceRoutes) // ✅ nyt importattu oikein
+app.use('/admin/balance', balanceRoutes)
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
-
