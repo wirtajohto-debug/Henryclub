@@ -38,8 +38,9 @@ app.post('/notify', async (req, res) => {
 
 app.use('/token', tokenRoutes)
 
-const port = process.env.PORT || 10000
-app.listen(port, () => console.log('HenryClub API listening on ' + port))
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
 
 const balanceRoutes = require('./routes/balance');
 app.use('/admin/balance', balanceRoutes);
