@@ -1,14 +1,18 @@
-import express from "express"
-import admin from "firebase-admin"
+import { Router } from 'express'
+import admin from 'firebase-admin'
 
-const router = express.Router()
+const router = Router()
 
-router.post("/add", async (req, res) => {
+// GET testiksi selaimella
+router.get('/add', (_, res) => {
+  res.json({ info: "POST /admin/balance/add {email, amount} lisää saldoa" })
+})
+
+router.post('/add', async (req, res) => {
   try {
     const { email, amount } = req.body
-
-    if (!req.user || !req.user.admin) {
-      return res.status(403).json({ error: "No admin rights" })
+    if (!email || !amount) {
+      return res.status(400).json({ error: "email ja amount pakollisia" })
     }
 
     const userRecord = await admin.auth().getUserByEmail(email)
@@ -20,7 +24,7 @@ router.post("/add", async (req, res) => {
       t.set(userRef, { balance: newBalance }, { merge: true })
     })
 
-    res.json({ success: true })
+    res.json({ success: true, email, added: amount })
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
